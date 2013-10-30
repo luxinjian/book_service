@@ -1,0 +1,16 @@
+div
+  form( method="post", action="/book/update")
+    fieldset
+        input(type='hidden', name='id', value= object.id)
+        label(for='name') Name
+        input#name(type='text', name='name', value= object.name)
+        br
+        label(for='author') Author
+        input#author(type='text', name='author', value= object.author)
+        br
+        label(for='publish_time') Publish_time
+        input#publish_time(type='text', name='publish_time', value= object.publish_time)
+        br
+        input(type='submit', value='update')
+br
+a(href='/book/index') books

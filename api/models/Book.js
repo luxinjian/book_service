@@ -14,9 +14,12 @@ module.exports = {
     name: 'TEXT',
     author: 'TEXT',
     publish_time: 'DATETIME',
-    chapters: 'INTEGER',
-    created_at	: 'DATETIME',
-    updated_at	: 'DATETIME',
+    chapters: {
+      type: 'INTEGER',
+      defaultsTo: 1
+    },
+    created_at: 'DATETIME',
+    updated_at: 'DATETIME',
   },
 
   autoCreatedAt: false,

@@ -1,0 +1,15 @@
+div
+  form( method="post", action="/book/create")
+    fieldset
+        label(for='name') Name
+        input#name(type='text', name='name')
+        br
+        label(for='author') Author
+        input#author(type='text', name='author')
+        br
+        label(for='publish_time') Publish_time
+        input#publish_time(type='text', name='publish_time')
+        br
+        input(type='submit', value='create')
+br
+a(href='/book/index') books
