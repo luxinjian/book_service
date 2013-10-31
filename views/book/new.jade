@@ -1,5 +1,5 @@
 div
-  form( method="post", action="/book/create")
+  form( method="post", action="/book/create", enctype="multipart/form-data")
     fieldset
         label(for='name') Name
         input#name(type='text', name='name')
@@ -9,6 +9,8 @@ div
         br
         label(for='publish_time') Publish_time
         input#publish_time(type='text', name='publish_time')
+        br
+        input(type="file", name="book")
         br
         input(type='submit', value='create')
 br
