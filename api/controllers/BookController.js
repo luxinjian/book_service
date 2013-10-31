@@ -5,6 +5,7 @@
  * @description	:: Contains logic for handling requests.
  */
 
+var BH = require(__dirname + '/../helpers/book-helper');
 
 module.exports = {
   new: function(req, res) {
@@ -26,6 +27,17 @@ module.exports = {
         res.send(err ? err : result);
       } else {
         res.redirect('/book/index');
+      }
+    });
+  },
+
+  find: function(req, res) {
+    console.log('book#find');
+    Book.findOne({id: req.param('id')}, function(err, result) {
+      if (err || !result) {
+        res.send(err ? err : result);
+      } else {
+        res.view({ object: result });
       }
     });
   },
@@ -86,6 +98,17 @@ module.exports = {
         res.send(err ? err : result);
       } else {
         res.view({ objects: result });
+      }
+    });
+  },
+
+  getChapter: function(req, res) {
+    console.log('book#getChapter');
+    BH.getChapter(req.param('bname'), req.param('cname'), function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(result);
       }
     });
   }

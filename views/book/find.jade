@@ -1,0 +1,23 @@
+div
+  table(border='1')
+    tr
+      td Name
+      td Author
+      td Publish Time
+      td Operation
+    tr
+      td= object.name
+      td= object.author
+      td= object.publish_time
+      td
+        a(href='/book/edit?id=' + object.id) edit
+        br
+        a(href='/book/destroy?id=' + object.id) delete
+
+  ol
+    - chapters = object.chapters
+    - for(var i=0; i<chapters.length; i++)
+      li
+        a(href='/book/getChapter?bname=' + object.name + '&cname=' + chapters[i]) #{chapters[i]}
+br
+a(href='/book/index') books

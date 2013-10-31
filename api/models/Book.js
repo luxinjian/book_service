@@ -15,8 +15,8 @@ module.exports = {
     author: 'TEXT',
     publish_time: 'DATETIME',
     chapters: {
-      type: 'INTEGER',
-      defaultsTo: 1
+      type: 'ARRAY',
+      defaultsTo: []
     },
     created_at: 'DATETIME',
     updated_at: 'DATETIME',
