@@ -90,9 +90,9 @@ module.exports = {
       if (err || !result) {
         res.send(err ? err : result);
       } else {
-        Book.destroy({id: req.param('id')}, function(err, result) {
-          if (err || !result) {
-            res.send(err ? err : result);
+        result.destroy(function(err) {
+          if (err) {
+            res.send(err);
           } else {
             res.redirect('/book/index');
           }
@@ -107,6 +107,7 @@ module.exports = {
       if (err || !result) {
         res.send(err ? err : result);
       } else {
+        console.log(result);
         res.view({ objects: result });
       }
     });
@@ -125,8 +126,29 @@ module.exports = {
 
   split: function(req, res) {
     console.log('book#split');
-    BH.split(req.param('type').trim(), req.param('marker').trim(), function(err) {
-      err ? res.send(err) : res.redirect('book/index');
+    console.log(req.param('id') + "***" + req.param('type') + "***" + req.param('match'));
+    Book.findOne({id: req.param('id')}, function(err, result) {
+      if (err || !result) {
+        res.send(err ? err : result);
+      } else if (result.is_split) {
+        res.send('book already splited!');
+      } else {
+        BH.split(result.name, req.param('type').trim(), req.param('match').trim(), function(err, chapters) {
+          if (err) {
+           res.send(err);
+          } else {
+            result.chapters = chapters;
+            result.is_split = true;
+            result.save(function(err) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.send('split ok!');
+              }
+            });
+          }
+        });
+      }
     });
   }
 };

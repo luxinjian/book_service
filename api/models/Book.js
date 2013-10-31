@@ -18,6 +18,10 @@ module.exports = {
       type: 'ARRAY',
       defaultsTo: []
     },
+    is_split: {
+      type: 'BOOLEAN',
+      defaultsTo: false
+    },
     created_at: 'DATETIME',
     updated_at: 'DATETIME',
   },
