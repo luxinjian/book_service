@@ -6,6 +6,7 @@
  */
 
 var BH = require(__dirname + '/../helpers/book-helper');
+var df = require('dateformat');
 
 module.exports = {
   new: function(req, res) {
@@ -58,6 +59,7 @@ module.exports = {
       if (err || !result) {
         res.send(err ? err : result);
       } else {
+        result.publish_time = df(result.publish_time, "yyyy-mm-dd");
         res.view({ object: result });
       }
     });
@@ -69,17 +71,42 @@ module.exports = {
       if (err || !result) {
         res.send(err ? err : result);
       } else {
-        result.name = req.param('name');
         result.author = req.param('author');
         result.publish_time = req.param('publish_time');
         result.updated_at = new Date();
-        result.save(function(err, result) {
-          if (err || !result) {
-            res.send(err ? err : result);
-          } else {
-            res.redirect('/book/index');
-          }
-        });
+
+        if (req.files.book.size != 0) {
+          var book_name = result.name;
+            BH.removeBook(book_name, function(err) {
+              if (err) {
+                res.send(err);
+              } else {
+                BH.saveBook(book_name, req.files.book.path, function(err) {
+                  if (err) {
+                    res.send(err);
+                  } else {
+                    result.is_split = false;
+
+                    result.save(function(err, result) {
+                      if (err || !result) {
+                        res.send(err ? err : result);
+                      } else {
+                        res.redirect('/book/index');
+                      }
+                    });
+                  }
+                });
+              }
+            });
+        } else {
+          result.save(function(err, result) {
+            if (err || !result) {
+              res.send(err ? err : result);
+            } else {
+              res.redirect('/book/index');
+            }
+          });
+        }
       }
     });
   },
@@ -140,7 +167,7 @@ module.exports = {
       } else {
         BH.split(result.name, req.param('type').trim(), req.param('match').trim(), function(err, chapters) {
           if (err) {
-           res.send(err);
+            res.send(err);
           } else {
             result.chapters = chapters;
             result.is_split = true;

@@ -12,7 +12,8 @@
     "pg": "*",
     "waterline": "*",
     "sails-postgresql": "*",
-    "rimraf": "2.2.2"
+    "rimraf": "2.2.2",
+    "dateformat": "*"
   },
   "scripts": {
     "start": "node app.js",
