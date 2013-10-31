@@ -43,7 +43,7 @@ module.exports = {
 
   find: function(req, res) {
     console.log('book#find');
-    Book.findOne({id: req.param('id')}, function(err, result) {
+    Book.findOne({id: req.param('id')}).done(function(err, result) {
       if (err || !result) {
         res.send(err ? err : result);
       } else {
@@ -94,7 +94,13 @@ module.exports = {
           if (err) {
             res.send(err);
           } else {
-            res.redirect('/book/index');
+            BH.removeBook(result.name, function(err) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.redirect('/book/index');
+              }
+            });
           }
         });
       }
@@ -103,11 +109,10 @@ module.exports = {
 
   index: function(req, res) {
     console.log('book#index');
-    Book.find({}, function(err, result) {
+    Book.find({}).done(function(err, result) {
       if (err || !result) {
         res.send(err ? err : result);
       } else {
-        console.log(result);
         res.view({ objects: result });
       }
     });
@@ -127,7 +132,7 @@ module.exports = {
   split: function(req, res) {
     console.log('book#split');
     console.log(req.param('id') + "***" + req.param('type') + "***" + req.param('match'));
-    Book.findOne({id: req.param('id')}, function(err, result) {
+    Book.findOne({id: req.param('id')}).done(function(err, result) {
       if (err || !result) {
         res.send(err ? err : result);
       } else if (result.is_split) {
@@ -143,7 +148,11 @@ module.exports = {
               if (err) {
                 res.send(err);
               } else {
-                res.send('split ok!');
+                // res.redirect('/book/index');
+                // Get follow error
+                //postgresql server: could not receive data from client: 连接被对端重置
+                //local: Can't set headers after they are sent 
+                res.view();
               }
             });
           }

@@ -1,4 +1,5 @@
 var fs = require('fs');
+var rimraf = require('rimraf');
 
 exports.getChapter = function(book_name, cpt_name, callback) {
   var path = sails.config.book_path + book_name + '/' + cpt_name + '.txt';
@@ -38,6 +39,14 @@ exports.saveBook = function(name, path, callback) {
         }
       });
     }
+  });
+};
+
+
+exports.removeBook = function(name, callback) {
+  var path = sails.config.book_path + name;
+  rimraf(path, function(err) {
+    err ? callback(err) : callback(null);
   });
 };
 

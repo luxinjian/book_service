@@ -16,5 +16,7 @@ div
             a(href='/book/destroy?id=' + objects[i].id) delete
             br
             a(href='/book/find?id=' + objects[i].id) show
+            br
+            a(href='/book/split?id=' + objects[i].id + '&type=start&match=第.回') split
 br
 a(href='/book/new') add book
