@@ -15,18 +15,28 @@ module.exports = {
 
   create: function(req, res) {
     console.log('book#create');
+    var book_name = req.param('name').trim();
     var info = {
-      name: req.param('name'),
+      name: book_name,
       author: req.param('author'),
       publish_time: req.param('publish_time'),
       created_at: new Date(),
       updated_at: new Date()
     };
-    Book.create(info, function(err, result) {
-      if (err || !result) {
-        res.send(err ? err : result);
+
+    // Save book
+    BH.saveBook(book_name, req.files.book.path, function(err) {
+      if (err) {
+        res.send(err);
       } else {
-        res.redirect('/book/index');
+        info.chapters = [book_name];
+        Book.create(info, function(err, result) {
+          if (err || !result) {
+            res.send(err ? err : result);
+          } else {
+            res.redirect('/book/index');
+          }
+        });
       }
     });
   },
@@ -104,12 +114,19 @@ module.exports = {
 
   getChapter: function(req, res) {
     console.log('book#getChapter');
-    BH.getChapter(req.param('bname'), req.param('cname'), function(err, result) {
+    BH.getChapter(req.param('bname').trim(), req.param('cname').trim(), function(err, result) {
       if (err) {
         res.send(err);
       } else {
         res.send(result);
       }
+    });
+  },
+
+  split: function(req, res) {
+    console.log('book#split');
+    BH.split(req.param('type').trim(), req.param('marker').trim(), function(err) {
+      err ? res.send(err) : res.redirect('book/index');
     });
   }
 };
