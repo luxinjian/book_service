@@ -1,6 +1,22 @@
 var fs = require('fs');
 var rimraf = require('rimraf');
+var async = require('async');
 
+
+// 根据id从数据库读取书信息
+exports.findBookById = function(id, callback) {
+  Book.findOne({id: id}, function(err, result) {
+    if (err) {
+      callback('find book err: ' + e, null);
+    } else if (!result) {
+      callback('invalid book id: ' + id, null);
+    } else {
+      callback(null, result);
+    }
+  });
+};
+
+// 根据书名及篇名得到篇章信息
 exports.getChapter = function(book_name, cpt_name, callback) {
   var path = sails.config.book_path + book_name + '/' + cpt_name + '.txt';
   fs.readFile(path, function(err, data) {
@@ -12,37 +28,41 @@ exports.getChapter = function(book_name, cpt_name, callback) {
   });
 };
 
-exports.saveBook = function(name, path, callback) {
-  // Read data from upload file
-  fs.readFile(path, function(err, data) {
-    if (err) {
-      callback(err);
-    } else {
-      var current_book_path = sails.config.book_path + name;
-      // Make book folder
-      fs.mkdir(current_book_path, function(err) {
-        if (err) {
-          callback(err);
-        } else {
-          // Save book as one .txt file with book name as file name
-          var file_path = current_book_path + '/' + name + '.txt';
-          fs.open(file_path, 'wx', function(err, fd) {
-            if (err) {
-              callback(err);
-            } else {
-              // Write to file
-              fs.writeFile(file_path, data, function(err) {
-                err ? callback(err) : callback(null);
-              });
-            }
-          });
-        }
-      });
-    }
+// 保存书文件到特定文件夹
+exports.saveBook = function(name, path, cb) {
+  var current_book_path = sails.config.book_path + name;
+  var file_path = current_book_path + '/' + name + '.txt';
+  async.waterfall([
+      // 读取上传书文件数据
+      function(callback) {
+        fs.readFile(path, function(err, data) {
+          callback(err, data);
+        });
+      },
+      // 在文件系统建立书文件存放文件夹
+      function(data, callback) {
+        fs.mkdir(current_book_path, function(err) {
+          callback(err, data);
+        });
+      },
+      // 在文件系统相应路径下建立书文件
+      function(data, callback) {
+        fs.open(file_path, 'wx', function(err, fd) {
+          callback(err, data);
+        });
+      },
+      // 存放书文件数据到书文件
+      function(data, callback) {
+        fs.writeFile(file_path, data, function(err) {
+          callback(err, null);
+        });
+      }
+  ], function(err, result) {
+    cb(err);
   });
 };
 
-
+// 从文件系统删除书文件
 exports.removeBook = function(name, callback) {
   var path = sails.config.book_path + name;
   rimraf(path, function(err) {
@@ -51,12 +71,12 @@ exports.removeBook = function(name, callback) {
 };
 
 exports.split = function(book_name, type, match, callback) {
-  // Get origin book content.
+  // 得到未拆分前书文件的内容
   var current_book_path = sails.config.book_path + book_name;
   var origin_text_path = current_book_path + '/' + book_name + '.txt';
   var origin_text = fs.readFileSync(origin_text_path).toString();
 
-  // Split depend on match-string's place
+  // 判断拆分字符串的位置并分别处理
   if('start' == type) {
     match = eval('/' + match + '/g');
     var matches = origin_text.match(match);
@@ -86,7 +106,7 @@ exports.split = function(book_name, type, match, callback) {
       });
     }
   } else if ('end' == type) {
-    // Implement in future.
+    // 放在以后实现
     callback('Function does not implement!', null);
   } else {
     callback('unknown type', null);
@@ -96,15 +116,15 @@ exports.split = function(book_name, type, match, callback) {
 function saveChapter(path, name, content, callback) {
   name = name.trim();
   var cpt_path = path + '/' + name + '.txt';
-  // Open or create file
+  // 根据路径打开或创建文件
   fs.open(cpt_path, 'w', function(err, fd) {
     if (err) {
       callback(err);
     } else {
-      // Write to file
+      // 将数据写入特定文件
       fs.writeFile(cpt_path, content, function(err) {
         err ? callback(err) : callback(null);
       });
     }
   });
-}
+};

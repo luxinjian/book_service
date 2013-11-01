@@ -13,7 +13,8 @@
     "waterline": "*",
     "sails-postgresql": "*",
     "rimraf": "2.2.2",
-    "dateformat": "*"
+    "dateformat": "*",
+    "async": "0.2.9"
   },
   "scripts": {
     "start": "node app.js",
