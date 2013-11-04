@@ -4,11 +4,11 @@
 2. postgresql 9.3rc1
 
 安装步骤
-1. 创建所需数据库
-`$ /path/to/pgsql/ bin/createdb bookhub  （例如 /usr/local/pgsql bin/createdb bookhub）`
-2. 下载源码
-`$ git clone git@github.com:luxinjian/book_service.git`
-3. 启动项目
-`$ sails lift`
-4. 访问
-http://localhost:3000
+1. 创建所需数据库 
+`$ /path/to/pgsql/ bin/createdb bookhub  （例如 /usr/local/pgsql bin/createdb bookhub` 
+2. 下载源码 
+`$ git clone git@github.com:luxinjian/book_service.git` 
+3. 启动项目 
+`$ sails lift` 
+4. 访问 
+http://localhost:3000 
